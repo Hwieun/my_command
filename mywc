@@ -1,0 +1,38 @@
+#!/bin/bash
+
+# function c
+c() {
+	if [ -f "$1" ]; then
+		contents=$(cat $1)
+	else
+		echo "File not found: $1"
+	fi
+
+	return
+}
+
+while getopts ":c:" opt; do
+	case $opt in
+		c)
+			echo $opt 
+			config_file="$OPTARG"
+			if [ -z "$config_file" ]; then
+				echo "Option -$opt requires a non-empty argument."
+				exit 1
+			fi
+			c $2
+			;;
+		\?)
+			echo 12345
+			;;
+		:)
+			echo "Option -$OPTARG requires an argument."
+			;;
+	esac
+done
+
+# Shift to remove processed options, if needed
+shift $((OPTIND-1))
+
+
+
