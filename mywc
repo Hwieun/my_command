@@ -17,7 +17,24 @@ c() {
 	echo "  $cnt $file_name"
 }
 
-while getopts ":c:" opt; do
+#function l 
+l() {
+	file_name="$1"
+
+	if [ -f "$file_name" ]; then
+		contents=$(cat $file_name)
+	else
+		echo "File not found: $file_name"
+	fi
+
+	line=0
+	while IFS= read -r _; do
+		((line++))
+	done < "$file_name"
+	echo "    $line $file_name"
+}
+
+while getopts ":cl:" opt; do
 	case $opt in
 		c)
 			config_file="$OPTARG"
@@ -27,11 +44,19 @@ while getopts ":c:" opt; do
 			fi
 			c $2
 			;;
-		\?)
-			echo 12345
+		l)
+			config_file="$OPTARG"
+			if [ -z "$config_file" ]; then
+				echo "Option -$opt requires a non-empty argument."
+				exit 1
+			fi
+			l $2
 			;;
 		:)
 			echo "Option -$OPTARG requires an argument."
+			;;
+		\?)
+			echo $opt
 			;;
 	esac
 done
